@@ -60,5 +60,10 @@ def parser_add_main_args(parser):
                         default=100, help='how often to print')
     parser.add_argument('--save_model', action='store_true', help='whether to save model')
     parser.add_argument('--model_dir', type=str, default='./model/', help='where to save model')
+    # own
+    parser.add_argument('--project', type=str, default='default-project', help='Wandb project entity')
+    parser.add_argument('--project_name', type=str, default='default-project-name', help='Wandb project name')
+    parser.add_argument('--info_dir', type=str, default=None, help='Directory to save additional information about the dataset')
+
 
 

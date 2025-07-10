@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+echo "Running script: $0"
+eval "$(python $DIRECTORY/data/extract_parameters.py $JSON_FILE $DATASET $GNN)"
+
+[[ -n "$HIDDEN_CHANNELS" ]] && CMD+=" --hidden_channels $HIDDEN_CHANNELS"
+[[ -n "$EPOCHS" ]] && CMD+=" --epochs $EPOCHS"
+[[ -n "$LR" ]] && CMD+=" --lr $LR"
+[[ -n "$RUNS" ]] && CMD+=" --runs $RUNS"
+[[ -n "$LOCAL_LAYERS" ]] && CMD+=" --local_layers $LOCAL_LAYERS"
+[[ -n "$DROPOUT" ]] && CMD+=" --dropout $DROPOUT"
+[[ -n "$METRIC" ]] && CMD+=" --metric $METRIC"
+[[ -n "$NORMALIZATION" ]] && CMD+=" $NORMALIZATION"
+[[ -n "$RESIDUAL" ]] && CMD+=" $RESIDUAL"
+[[ "$RAND_SPLIT_CLASS" == true ]] && CMD+=" --rand_split_class"
+[[ -n "$VALID_NUM" ]] && CMD+=" --valid_num $VALID_NUM"
+[[ -n "$TEST_NUM" ]] && CMD+=" --test_num $TEST_NUM"
+[[ -n "$SEED" ]] && CMD+=" --seed $SEED"
+[[ "$PRE_LINEAR" == true ]] && CMD+=" --pre_linear"
+[[ -n "$WEIGHT_DECAY" ]] && CMD+=" --weight_decay $WEIGHT_DECAY"
+eval "$CMD"

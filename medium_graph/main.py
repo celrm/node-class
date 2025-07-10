@@ -88,8 +88,19 @@ logger = Logger(args.runs, args)
 model.train()
 print('MODEL:', model)
 
+import wandb
+
 ### Training loop ###
 for run in range(args.runs):
+    
+    wandb.init(
+        project=args.project,
+        config={
+            **vars(args)
+        },
+        name=args.project_name + '_' + str(run),
+    )
+    
     if args.dataset in ('coauthor-cs', 'coauthor-physics', 'amazon-computer', 'amazon-photo', 'cora', 'citeseer', 'pubmed'):
         split_idx = split_idx_lst[0]
     else:
@@ -100,7 +111,7 @@ for run in range(args.runs):
     best_val = float('-inf')
     best_test = float('-inf')
     if args.save_model:
-        save_model(args, model, optimizer, run)
+        save_model(args, model, optimizer, run, 'init')
 
     for epoch in range(args.epochs):
         model.train()
@@ -129,7 +140,7 @@ for run in range(args.runs):
             best_val = result[1]
             best_test = result[2]
             if args.save_model:
-                save_model(args, model, optimizer, run)
+                save_model(args, model, optimizer, run, 'best')
 
         if epoch % args.display_step == 0:
             print(f'Epoch: {epoch:02d}, '
@@ -139,9 +150,23 @@ for run in range(args.runs):
                   f'Test: {100 * result[2]:.2f}%, '
                   f'Best Valid: {100 * best_val:.2f}%, '
                   f'Best Test: {100 * best_test:.2f}%')
+
+        wandb.log({
+            'loss': loss,
+            'train_acc': result[0],
+            'valid_acc': result[1],
+            'test_acc': result[2],
+            'best_valid_acc': best_val,
+            'best_test_acc': best_test
+        })
+
+    wandb.finish()
+    if args.save_model:
+        save_model(args, model, optimizer, run, 'final')
+
     logger.print_statistics(run)
 
 results = logger.print_statistics()
-### Save results ###
-save_result(args, results)
+# ### Save results ###
+# save_result(args, results)
 

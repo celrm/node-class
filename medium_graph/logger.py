@@ -67,22 +67,24 @@ class Logger(object):
             f.write(f'test acc:{self.test}\n')
 
 import os
-def save_model(args, model, optimizer, run):
-    if not os.path.exists(f'models/{args.dataset}'):
-        os.makedirs(f'models/{args.dataset}')
+def save_model(args, model, optimizer, run, name="none"):
     if(args.model=='MPNN'):
-        model_path = f'models/{args.dataset}/{args.model}_{args.gnn}_{run}.pt'
+        if not os.path.exists(f'{args.model_dir}/{args.dataset}/{args.gnn}'):
+            os.makedirs(f'{args.model_dir}/{args.dataset}/{args.gnn}')
+        model_path = f'{args.model_dir}/{args.dataset}/{args.gnn}/{name}_{run}.pt'
     else:
-        model_path = f'models/{args.dataset}/{args.model}_{run}.pt'
+        if not os.path.exists(f'{args.model_dir}/{args.dataset}/{args.model}'):
+            os.makedirs(f'{args.model_dir}/{args.dataset}/{args.model}')
+        model_path = f'{args.model_dir}/{args.dataset}/{args.model}/{name}_{run}.pt'
     torch.save({'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict()
                 }, model_path)
 
-def load_model(args, model, optimizer, run):
+def load_model(args, model, optimizer, run, name="none"):
     if(args.model=='MPNN'):
-        model_path = f'models/{args.dataset}/{args.model}_{args.gnn}_{run}.pt'
+        model_path = f'{args.model_dir}/{args.dataset}/{args.gnn}/{name}_{run}.pt'
     else:
-        model_path = f'models/{args.dataset}/{args.model}_{run}.pt'
+        model_path = f'{args.model_dir}/{args.dataset}/{args.model}/{name}_{run}.pt'
     checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
